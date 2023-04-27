@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import * as fromApp from './app.reducer';
 import { Store } from '@ngrx/store';
@@ -17,8 +17,20 @@ export class AppComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
-    console.log('initiating session store')
+    console.log('initiating session store');
+    
+    this.store.dispatch(SessionActions.initSession({
+      session : {
+        timeUntilExp :2000,
+        timerExpiration : setTimeout(() => {
+          this.store.dispatch(SessionActions.expirationTimerElapsed())
+        }, 2000) as unknown as number  ,
+        
+        terminateSessionInitiated : false
+      }
+    }))
     this.store.dispatch(SessionActions.storeSession({'sessionID' : 'test'}));
+    
   }
   title = 'my-first-project';
 }
